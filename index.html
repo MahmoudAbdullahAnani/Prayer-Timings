@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="er">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Prayer Timings" />
+    <!-- Get Bootstrap css -->
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <!-- Get Bootstrap js -->
+    <link rel="stylesheet" href="bootstrap.bundle.js" />
+    <!-- Get Style css -->
+    <link rel="stylesheet" href="main.css" />
+    <!-- Get Script js -->
+    <link rel="stylesheet" href="main.js" />
+    <!-- Get Tialwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Prayer Timings</title>
+  </head>
+  <body class="bg-gradient-to-r from-teal-600 to-slate-600">
+    <div class="contentHeader flex justify-evenly pt-5 mt-4">
+      <div class="flex flex-col fs-3 text-right">
+        <label for="" class="pb-3 fs-4 font-bold ms-3">:قم بختيار الموقع</label>
+        <select
+          onchange="shange()"
+          id="selcshan"
+          class="mySelect text-black bg-gradient-to-r from-orange-200 to-zinc-400 py-2 px-3 rounded-lg text-right"
+        >
+          <!-- <option value="m">محمود</option>
+          <option value="m">محمود</option>
+          <option value="m">محمود</option>
+          <option value="m">محمود</option> -->
+        </select>
+      </div>
+      <div>
+        <h1 class="fs-1 pb-3" id="title">المنصورة</h1>
+        <div class="flex align-items-center gap-3">
+          <p class="fs-5" id="day">الجمعة 9 اكتوبر</p>
+          <p id="yomm" class="fs-2"></p>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-wrap gap-3 justify-around mt-5 pt-5">
+      <div class="text-center rounded bg-white text-black">
+        <h2
+          class="fs-3 px-4 py-2 rounded-t bg-gradient-to-r from-purple-500 to-pink-500"
+        >
+          العشاء
+        </h2>
+        <p class="fs-5 px-4 py-2" id="isha">discrpshan</p>
+      </div>
+      <div class="text-center rounded bg-white text-black">
+        <h2
+          class="fs-3 px-4 py-2 rounded-t bg-gradient-to-r from-purple-500 to-pink-500"
+        >
+          المغرب
+        </h2>
+        <p class="fs-5 px-4 py-2" id="m4rep">discrpshan</p>
+      </div>
+      <div class="text-center rounded bg-white text-black">
+        <h2
+          class="fs-3 px-4 py-2 rounded-t bg-gradient-to-r from-purple-500 to-pink-500"
+        >
+          العصر
+        </h2>
+        <p class="fs-5 px-4 py-2" id="asr">discrpshan</p>
+      </div>
+      <div class="text-center rounded bg-white text-black">
+        <h2
+          class="fs-3 px-4 py-2 rounded-t bg-gradient-to-r from-purple-500 to-pink-500"
+        >
+          الظهر
+        </h2>
+        <p class="fs-5 px-4 py-2" id="thhre">discrpshan</p>
+      </div>
+      <div class="text-center rounded bg-white text-black">
+        <h2
+          class="fs-3 px-4 py-2 rounded-t bg-gradient-to-r from-purple-500 to-pink-500"
+        >
+          الصبح
+        </h2>
+        <p class="fs-5 px-4 py-2" id="sobh">discrpshan</p>
+      </div>
+      <div class="text-center rounded bg-white text-black">
+        <h2
+          class="fs-3 px-4 py-2 rounded-t bg-gradient-to-r from-purple-500 to-pink-500"
+        >
+          الفجر
+        </h2>
+        <p class="fs-5 px-4 py-2" id="fajer">discrpshan</p>
+      </div>
+    </div>
+    <!-- Get Axios -->
+    <script src="axios.min.js"></script>
+    <script>
+      const city = [
+        "المنصورة",
+        "الزقازيق",
+        "جنوب سيناء",
+        "شمال سيناء",
+        "القاهرة",
+        "السويس",
+      ];
+      // Handel options in selected
+      for (let c of city) {
+        let slct = document.getElementById("selcshan");
+        let op = `<option>${c}</option>`;
+        slct.innerHTML += op;
+      }
+      // Optionally the request above could also be done as
+      function shange() {
+        document.getElementById("title").innerHTML =
+          document.getElementById("selcshan").value;
+        // console.log(document.getElementById("title").innerHTML);
+        document.getElementById("title").innerHTML === 'المنصورة'? fetshData('EG-DK') : document.getElementById("title").innerHTML === 'الزقازيق'? fetshData('EG-SHR') : document.getElementById("title").innerHTML === 'جنوب سيناء'? fetshData('EG-JS') : document.getElementById("title").innerHTML === 'شمال سيناء'? fetshData('EG-SIN') : document.getElementById("title").innerHTML === 'القاهرة'? fetshData('Cairo') :  document.getElementById("title").innerHTML === 'السويس'&& fetshData('EG-SUZ') 
+      }
+      fetshData();
+      function fetshData(city) {
+        let params = {
+          country: "EG",
+          city: city || "EG-DK",
+        };
+        axios
+          .get("http://api.aladhan.com/v1/timingsByCity", {
+            params,
+          })
+          .then(function (response) {
+            const API = response.data.data.timings;
+            setTiming("fajer", response.data.data.timings.Fajr);
+            setTiming("sobh", response.data.data.timings.Sunrise);
+            setTiming("thhre", response.data.data.timings.Dhuhr);
+            setTiming("asr", response.data.data.timings.Asr);
+            setTiming("m4rep", response.data.data.timings.Maghrib);
+            setTiming("isha", response.data.data.timings.Isha);
+            document.getElementById("day").innerHTML =
+              response.data.data.date.readable;
+            document.getElementById("yomm").innerHTML =
+              response.data.data.date.hijri.weekday.ar;
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            // always executed
+          });
+        function setTiming(id, vall) {
+          document.getElementById(id).innerHTML = vall;
+        }
+      }
+    </script>
+    <div class='text-center mt-5 text-white py-3 bg-slate-800'>
+      <p classs='m-0'>
+      copyright &#169; Mahmoud Abdullah Anani
+      </p>
+    </div>
+  </body>
+</html>
